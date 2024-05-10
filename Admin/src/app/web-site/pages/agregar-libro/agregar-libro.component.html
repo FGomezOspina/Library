@@ -1,0 +1,109 @@
+<div class="fondo">
+  <div class="left">
+    <div class="card-body">
+      <ngx-dropzone
+        class="dark-dropzone"
+        (change)="onSelect($event)"
+        [multiple]="false"
+        [expandable]="false"
+        [accept]="'.jpg,.jpeg,.png,.gif'"
+        style="height: 210px !important"
+      >
+        <ngx-dropzone-label>
+          <p>
+            <span class="fw-bold">
+              <i
+                style="font-size: 1.4em"
+                class="dripicons-cloud-upload text-primary me-2"
+              ></i>
+              Arrastra la imagen aquí o haz clic para subirla</span
+            >
+            <br /><br />
+            El límite de carga es de hasta 20MB por archivo.
+          </p>
+        </ngx-dropzone-label>
+      </ngx-dropzone>
+    </div>
+    
+  </div>
+
+  <div class="right">
+    <div class="mb-3">
+      <label for="username" class="form-label">Nombre del libro</label>
+    
+      <input
+        type="text"
+        formControlName="firstName"
+        class="form-control"
+        id="firstName"
+        placeholder="Nombre del libro"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Autor</label>
+    
+      <input
+        type="text"
+        formControlName="firstName"
+        class="form-control"
+        id="firstName"
+        placeholder="Autor"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">ISSN</label>
+    
+      <input
+        type="text"
+        formControlName="firstName"
+        class="form-control"
+        id="firstName"
+        placeholder="ISSN"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Año de publicacion</label>
+    
+      <input
+        type="number"
+        formControlName="firstName"
+        class="form-control"
+        id="firstName"
+        placeholder="Año de publicacion"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="condition" class="form-label">Condición del libro</label>
+      <select formControlName="condition" class="form-select" id="condition">
+        <option value="new">Nuevo</option>
+        <option value="used">Usado</option>
+      </select>
+    </div>
+    
+    <div class="mb-3">
+      <label for="price" class="form-label">Precio del libro</label>
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <input
+          type="text"
+          formControlName="price"
+          class="form-control"
+          id="price"
+          placeholder="Precio del libro"
+        />
+      </div>
+    </div>
+    
+
+    <div class="mt-4 d-grid">
+      <button class="btn btn-soft-primary" type="submit">
+        Registrar
+      </button>
+    </div>
+  </div>
+  
+</div>

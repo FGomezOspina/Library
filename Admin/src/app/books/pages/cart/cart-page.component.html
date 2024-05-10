@@ -1,0 +1,808 @@
+<div class="container-fluid" style="max-width: 96%">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="row mb-3">
+        <div class="mt-3 mb-3 text-dark">
+          <h1 class="fw-bold">Tu carrito <i class="bx bx-cart"></i></h1>
+          <p>
+            ¿No estás listo para pagar?
+            <a routerLink="/books">Seguir comprando</a>
+          </p>
+        </div>
+        <div class="col-xl-4 col-sm-6">
+          <div class="mt-2 text-dark">
+            <h5>Recientes</h5>
+          </div>
+        </div>
+        <div class="col-lg-8 col-sm-6">
+          <form class="mt-4 mt-sm-0 float-sm-end d-flex align-items-center">
+            <div class="search-box me-2">
+              <div class="position-relative">
+                <!--Searcher for db products-->
+                <input
+                  *ngIf="authenticationService?.authService?.model"
+                  type="search"
+                  class="form-control"
+                  id="searchInput"
+                  placeholder="Search"
+                  [formControl]="searchControl"
+                  autocomplete="new-input"
+                />
+                <!--Searcher for local products-->
+                <input
+                  *ngIf="
+                    !authenticationService?.authService?.model &&
+                    localCartProducts.length
+                  "
+                  type="search"
+                  class="form-control"
+                  id="searchInput"
+                  placeholder="Search"
+                  [(ngModel)]="searchText"
+                  [ngModelOptions]="{ standalone: true }"
+                  autocomplete="new-input"
+                />
+                <i
+                  *ngIf="
+                    authenticationService?.authService?.model ||
+                    (!authenticationService?.authService?.model &&
+                      localCartProducts.length)
+                  "
+                  class="bx bx-search-alt search-icon"
+                ></i>
+              </div>
+            </div>
+            <ul class="nav nav-pills product-view-nav">
+              <li class="nav-item">
+                <a (click)="clear()" class="btn btn-light"
+                  ><i class="mdi mdi-refresh"></i
+                ></a>
+              </li>
+            </ul>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <!--data for db products-->
+        <div
+          *ngIf="
+            (service.collection$ | async)?.data?.length &&
+            authenticationService?.authService?.model
+          "
+          class="row"
+        >
+          <div
+            class="col-12"
+            *ngFor="
+              let data of (service.collection$ | async)?.data;
+              let index = index
+            "
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img
+                      *ngIf="data?.product?.media?.length > 0"
+                      [src]="data?.product?.media[0]?.url"
+                      (click)="lightboxImage(data?.product?.media[0]?.url)"
+                      class="img-fluid rounded cursor-pointer"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-8 d-flex align-items-center">
+                    <div class="col-12 ms-2 text-dark">
+                      <h4
+                        [routerLink]="'/books/detail/' + data.product.id"
+                        class="fw-bold cursor-pointer"
+                      >
+                        {{ data.product.title }}
+                      </h4>
+                      <p>
+                        Quantity:
+                        <span class="text-primary fw-bold">{{
+                          data.quantity
+                        }}</span>
+                      </p>
+                      <p *ngIf="data.size">Size: {{ data.size.value }}</p>
+                      <p *ngIf="data.color">Color: {{ data.color.value }}</p>
+                      <div
+                        class="col-12 d-flex flex-wrap justify-content-between align-items-end"
+                      >
+                        <div
+                          *ngIf="
+                            (!data.product?.wholesaleMinQuantity &&
+                              !data.product?.wholesalePrice) ||
+                            data.quantity < data.product?.wholesaleMinQuantity
+                          "
+                        >
+                          <h4 *ngIf="data.product?.discount > 0">
+                            Price :
+                            <span class="text-muted me-4"
+                              ><del>${{ data.product?.price }} COP</del>
+                            </span>
+                            <b
+                              >${{
+                                (
+                                  data.product?.price -
+                                  data.product?.price *
+                                    (data.product?.discount / 100)
+                                ).toFixed(1)
+                              }}
+                              COP</b
+                            >
+                          </h4>
+                          <h4
+                            *ngIf="
+                              data.product?.discount === null ||
+                              data.product?.discount == 0
+                            "
+                          >
+                            Price :
+                            <b>${{ data.product?.price }} COP</b>
+                          </h4>
+                        </div>
+
+                        <div
+                          *ngIf="
+                            data.quantity >=
+                              data.product?.wholesaleMinQuantity &&
+                            data.product?.wholesalePrice &&
+                            roleNames.includes('WHOLESALE_USER') &&
+                            authenticationService?.authService?.model
+                              ?.wholesaleUsers?.isApproved
+                          "
+                        >
+                          <h4 *ngIf="data.product?.wholesaleDiscount > 0">
+                            Price :
+                            <span class="text-muted me-4"
+                              ><del
+                                >${{ data.product?.wholesalePrice }} COP</del
+                              >
+                            </span>
+                            <b
+                              >${{
+                                (
+                                  data.product?.wholesalePrice -
+                                  data.product?.wholesalePrice *
+                                    (data.product?.wholesaleDiscount / 100)
+                                ).toFixed(1)
+                              }}
+                              COP</b
+                            >
+                          </h4>
+                          <h4
+                            *ngIf="
+                              data.product?.wholesaleDiscount === null ||
+                              data.product?.wholesaleDiscount == 0
+                            "
+                          >
+                            Wholesale Price :
+                            <b>${{ data.product?.wholesalePrice }} COP</b>
+                          </h4>
+                        </div>
+
+                        <a
+                          (click)="removeItem(data, index)"
+                          class="text-decoration-underline me-3 cursor-pointer"
+                          >Quitar</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-between align-items-center">
+            <div class="col-auto me-auto">
+              <div class="dataTables_length" id="tickets-table_length">
+                <label class="d-inline-flex align-items-center"
+                  >Show
+                  <select
+                    aria-controls="tickets-table"
+                    name="pageSize"
+                    [formControl]="limitControl"
+                    class="custom-select custom-select-sm form-control form-control-sm mx-2"
+                  >
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                  </select>
+                  entries</label
+                >
+              </div>
+            </div>
+            <div class="col-auto me-auto">
+              <p class="mb-0">
+                showing
+                <b>{{ service.from }}</b>
+                to <b>{{ service.to }}</b>
+                of
+                <b>{{ service.total }}</b>
+                entries
+              </p>
+            </div>
+
+            <div class="col-auto">
+              <ul
+                class="pagination pagination-rounded justify-content-end mb-2"
+              >
+                <ngb-pagination
+                  [collectionSize]="service.total"
+                  [(page)]="service.page"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  [pageSize]="service.limit"
+                >
+                </ngb-pagination>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!--data for local products-->
+        <div
+          *ngIf="
+            localCartProducts.length &&
+            !authenticationService?.authService?.model
+          "
+          class="row"
+        >
+          <div
+            class="col-12"
+            *ngFor="
+              let data of localCartProducts
+                | appFilter : searchText
+                | slice
+                  : (page - 1) * pageSize
+                  : (page - 1) * pageSize + pageSize;
+              let index = index
+            "
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img
+                      *ngIf="data?.product?.media?.length > 0"
+                      [src]="data?.product?.media[0]?.url"
+                      (click)="lightboxImage(data?.product?.media[0]?.url)"
+                      class="img-fluid rounded cursor-pointer"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-8 d-flex align-items-center">
+                    <div class="col-12 ms-2 text-dark">
+                      <h4
+                        [routerLink]="'/books/detail/' + data.product.id"
+                        class="fw-bold cursor-pointer"
+                      >
+                        {{ data.product.title }}
+                      </h4>
+                      <p>
+                        Quantity:
+                        <span class="text-primary fw-bold">{{
+                          data.quantity
+                        }}</span>
+                      </p>
+                      <p *ngIf="data.size">Size: {{ data.size.value }}</p>
+                      <p *ngIf="data.color">Color: {{ data.color.value }}</p>
+                      <div
+                        class="col-12 d-flex flex-wrap justify-content-between align-items-end"
+                      >
+                        <h4>${{ data.product.price }}</h4>
+                        <a
+                          (click)="removeItem(data, index)"
+                          class="text-decoration-underline me-3 cursor-pointer"
+                          >Quitar</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center align-items-center">
+            <div class="col-auto">
+              <ul
+                class="pagination pagination-rounded justify-content-center mb-2"
+              >
+                <ngb-pagination
+                  [collectionSize]="
+                    (localCartProducts | appFilter : searchText).length
+                  "
+                  [(page)]="page"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  [pageSize]="pageSize"
+                >
+                </ngb-pagination>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!--No data scenario-->
+        <div
+          *ngIf="
+            localCartProducts.length === 0 &&
+            (service.collection$ | async)?.data?.length === 0
+          "
+        >
+          <div class="row justify-content-center py-2">
+            <div class="col-12">
+              <h3 class="text-center">No products avaliable</h3>
+            </div>
+          </div>
+        </div>
+        <!-- end row -->
+      </div>
+    </div>
+
+    <div class="col-lg-5 ms-lg-5 d-flex align-items-center">
+      <div class="col-12 d-flex justify-content-center">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body p-5">
+              <div *ngIf="step === 0">
+                <div>
+                  <h2 class="fw-bold">Resumen del pedido</h2>
+                  <form
+                    (ngSubmit)="validateCupon()"
+                    [formGroup]="cuponGroup"
+                    class="d-flex align-items-center"
+                  >
+                    <input
+                      class="form-control mt-4"
+                      formControlName="code"
+                      placeholder="Ingresa el codigo del cupon aqui"
+                      type="text"
+                      id="cupon"
+                      [ngClass]="ngClassValidateCupon(cuponGroup, 'code')"
+                    />
+                    <button
+                      [disabled]="
+                        localCartProducts.length === 0 &&
+                        (service.collection$ | async)?.data?.length === 0
+                      "
+                      type="submit"
+                      class="ms-1 btn btn-soft-success mt-4"
+                    >
+                      Validate
+                    </button>
+                  </form>
+                </div>
+                <div
+                  class="mt-3"
+                  *ngIf="
+                    localCartProducts.length === 0 &&
+                    (service.collection$ | async)?.data?.length === 0
+                  "
+                >
+                  <p class="text-danger">
+                    No products <i class="dripicons-warning"></i>
+                  </p>
+                </div>
+                <div class="mt-2 d-flex justify-content-between">
+                  <p class="fw-bold font-size-16">Subtotal</p>
+                  <p class="font-size-16">${{ totalPrice.toFixed(1) }} COP</p>
+                </div>
+                <div class="mt-2 d-flex flex-wrap justify-content-between">
+                  <p class="fw-bold font-size-16">Envio</p>
+                  <p class="font-size-16">Calculado en el siguiente paso.</p>
+                </div>
+
+                <hr class="custom-border" />
+
+                <div class="mt-2 d-flex justify-content-between">
+                  <p class="fw-bold font-size-16">Total</p>
+                  <p class="font-size-16">
+                    ${{ totalPrice.toFixed(1) }} COP
+                    <img
+                      class="img-fluid"
+                      src="assets/images/flags/colombia.png"
+                      alt=""
+                      width="20"
+                    />
+                  </p>
+                </div>
+                <div class="mt-2">
+                  <button
+                    [disabled]="
+                      localCartProducts.length === 0 &&
+                      (service.collection$ | async)?.data?.length === 0
+                    "
+                    (click)="billingStep()"
+                    class="btn btn-dark w-100"
+                  >
+                    Continua a la comprobacion
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="step === 1">
+                <div>
+                  <h2 class="fw-bold">
+                    <i
+                      (click)="step = step - 1"
+                      class="dripicons-backspace cursor-pointer"
+                    ></i>
+                    <span class="ms-2">Carrito de compras</span>
+                  </h2>
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <p class="mb-0 fw-bold text-success">Direccion</p>
+                    </div>
+                    <div class="col-3 my-auto">
+                      <hr class="custom-border" />
+                    </div>
+                    <div class="col-auto">
+                      <p class="mb-0">Pago</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="my-4">
+                  <h4>Informacion de la compra</h4>
+                  <button
+                    class="btn btn-sm btn-soft-primary mb-2"
+                    (click)="autoFill()"
+                  >
+                    Llenar con mis datos
+                  </button>
+                  <form
+                    (ngSubmit)="ngSubmitBillingDetails()"
+                    [formGroup]="billingGroup"
+                    class="row"
+                  >
+                    <div class="col-md-6 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Nombre"
+                        formControlName="firstName"
+                        [ngClass]="ngClassValidate(billingGroup, 'firstName')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['firstName'].errors">
+                          Primer nombre tiene que ser valido
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Apellido"
+                        formControlName="lastName"
+                        [ngClass]="ngClassValidate(billingGroup, 'lastName')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['lastName'].errors">
+                          Segundo nombre tiene que ser valido
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Direccion"
+                        formControlName="address"
+                        [ngClass]="ngClassValidate(billingGroup, 'address')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['address'].errors">
+                          Direccion tiene que ser valido
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Email"
+                        formControlName="email"
+                        [ngClass]="ngClassValidate(billingGroup, 'email')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['email'].errors">Email tiene que ser valido</div>
+                      </div>
+                    </div>
+                    <div class="col-12 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Casa, apartamento, oficina, etc (opcional)"
+                        formControlName="addressOptional"
+                        [ngClass]="
+                          ngClassValidate(billingGroup, 'addressOptional')
+                        "
+                      />
+                    </div>
+                    <div class="col-4 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Pais"
+                        formControlName="country"
+                        [ngClass]="ngClassValidate(billingGroup, 'country')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['country'].errors">
+                          Ciudad tiene que ser valido
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Ciudad"
+                        formControlName="city"
+                        [ngClass]="ngClassValidate(billingGroup, 'city')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['city'].errors">Ciudad tiene que ser valida</div>
+                      </div>
+                    </div>
+                    <div class="col-4 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Codigo Postal"
+                        formControlName="postalCode"
+                        [ngClass]="ngClassValidate(billingGroup, 'postalCode')"
+                      />
+                      <div *ngIf="billingSubmit && f" class="invalid-feedback">
+                        <div *ngIf="f['postalCode'].errors">
+                          Codigo postal tiene que ser valido
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 my-1">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Opcional"
+                        formControlName="optional"
+                        [ngClass]="ngClassValidate(billingGroup, 'optional')"
+                      />
+                    </div>
+                  </form>
+                </div>
+                <hr class="custom-border" />
+                <div class="mt-2 d-flex justify-content-between">
+                  <p class="fw-bold font-size-16">Total</p>
+                  <p class="font-size-16">
+                    ${{ totalPrice.toFixed(1) }} COP
+                    <img
+                      class="img-fluid"
+                      src="assets/images/flags/colombia.png"
+                      alt=""
+                      width="20"
+                    />
+                  </p>
+                </div>
+                <div class="mt-2">
+                  <button
+                    (click)="ngSubmitBillingDetails()"
+                    class="btn btn-dark w-100"
+                  >
+                    Continuar
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="step === 2">
+                <div class="my-2">
+                  <h2 class="fw-bold">
+                    <i
+                      (click)="step = step - 1"
+                      class="dripicons-backspace cursor-pointer"
+                    ></i>
+                    <span class="ms-2">Checkout</span>
+                  </h2>
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <p class="mb-0">Direccion</p>
+                    </div>
+                    <div class="col-3 my-auto">
+                      <hr class="custom-border" />
+                    </div>
+                    <div class="col-auto">
+                      <p class="mb-0 fw-bold text-success">Pago</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 my-md-2">
+                    <div
+                      class="bg-white shadow-lg cursor-pointer"
+                      (click)="paypal()"
+                    >
+                      <div class="d-flex justify-content-center">
+                        <img
+                          src="assets/images/providers/paypal1.svg"
+                          class="rounded-circle"
+                          width="40"
+                          height="40"
+                          alt=""
+                        />
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <p class="text-center text-sm">PayPal</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 my-md-2">
+                    <div
+                      class="bg-white shadow-lg cursor-pointer"
+                      (click)="mercadoPago()"
+                    >
+                      <div class="d-flex justify-content-center">
+                        <img
+                          src="assets/images/providers/mercado-pago.svg"
+                          class="rounded-circle"
+                          width="40"
+                          height="40"
+                          alt=""
+                        />
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <p class="text-center text-sm">Mercado Pago</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 my-md-2">
+                    <div
+                      class="bg-white shadow-lg cursor-pointer"
+                      (click)="payu()"
+                    >
+                      <div class="d-flex justify-content-center">
+                        <img
+                          src="assets/images/providers/payu.svg"
+                          class="rounded-circle"
+                          width="40"
+                          height="40"
+                          alt=""
+                        />
+                      </div>
+                      <div class="d-flex justify-content-center">
+                        <p class="text-center text-sm">PayU</p>
+                      </div>
+                    </div>
+                  </div>
+                  <form
+                    action="https://checkout.payulatam.com/ppp-web-gateway-payu"
+                    method="post"
+                    #payuForm
+                    *ngIf="payuR"
+                  >
+                    <input
+                      name="merchantId"
+                      type="hidden"
+                      [value]="payuMerchantId"
+                    />
+                    <input
+                      name="accountId"
+                      type="hidden"
+                      [value]="payuAccountId"
+                    />
+                    <input
+                      name="description"
+                      type="hidden"
+                      [value]="payuR.description"
+                    />
+                    <input
+                      name="referenceCode"
+                      type="hidden"
+                      [value]="payuR.referenceCode"
+                    />
+                    <input name="amount" type="hidden" [value]="payuR.amount" />
+                    <input name="currency" type="hidden" value="USD" />
+                    <input name="test" type="hidden" value="0" />
+                    <input
+                      name="buyerEmail"
+                      type="hidden"
+                      [value]="authenticationService.authService.model.email"
+                    />
+                    <input
+                      name="surl"
+                      type="hidden"
+                      [value]="payuR.successURL"
+                    />
+                    <input name="furl" type="hidden" [value]="payuR.failURL" />
+                    <input
+                      name="signature"
+                      type="hidden"
+                      [value]="payuR.signature"
+                    />
+                    <input name="txnid" type="hidden" [value]="payuR.txnid" />
+                    <input name="hash" type="hidden" [value]="payuR.hash" />
+                    <input
+                      name="confirmationUrl"
+                      type="hidden"
+                      [value]="payuR.responseUrl"
+                    />
+                    <input
+                      name="responseUrl"
+                      type="hidden"
+                      [value]="payuR.responseUrl"
+                    />
+                  </form>
+                </div>
+                <!-- <hr class="custom-border" /> -->
+                <div class="mt-4 d-flex justify-content-between">
+                  <p class="fw-bold font-size-18">Total</p>
+                  <p class="font-size-18">
+                    ${{ totalPrice.toFixed(1) }} COP
+                    <img
+                      class="img-fluid"
+                      src="assets/images/flags/colombia.png"
+                      alt=""
+                      width="20"
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row mt-4">
+      <div class="col-md-6 ps-md-5">
+        <h3 class="mb-4">Informacion del pedido</h3>
+        <ngb-accordion
+          [closeOthers]="true"
+          activeIds="static-1"
+          class="custom-accordion"
+        >
+          <ngb-panel id="static-1">
+            <ng-template ngbPanelTitle class="accordion-list">
+              <div>Política de devoluciones</div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="card-body p-0">
+                <p class="mb-0">
+                  Este es nuestro ejemplo de política de devoluciones, que es
+                  todo lo que necesita saber sobre nuestras devoluciones..
+                </p>
+              </div>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="static-2">
+            <ng-template ngbPanelTitle class="accordion-list">
+              <div>Opciones de envio</div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="card-body p-0">
+                <p class="mb-0">
+                  Este es nuestro ejemplo de opciones de envio, que es todo lo
+                  que necesita saber sobre nuestros envios..
+                </p>
+              </div>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="static-3">
+            <ng-template ngbPanelTitle class="accordion-list">
+              <div>How is it possible ?</div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="card-body p-0">
+                <p class="mb-0">
+                  Este es nuestro ejemplo de opciones de pago, que es todo lo
+                  que necesita saber sobre nuestros pagos..
+                </p>
+              </div>
+            </ng-template>
+          </ngb-panel>
+        </ngb-accordion>
+      </div>
+    </div>
+  </div>
+</div>

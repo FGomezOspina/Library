@@ -1,0 +1,201 @@
+<nav
+  class="navbar navbar-expand-lg navigation fixed-top sticky"
+  (window:scroll)="windowScroll()"
+  id="navbar"
+>
+  <div class="container">
+    <a class="navbar-logo" routerLink="/">
+      <!--img
+        src="assets/images/logos/robin-dark.png"
+        alt=""
+        height="30"
+        class="logo logo-dark"
+      /-->
+
+      <img
+        src="../../../../assets/images/LOGO_LIBRERIA.png"
+        alt="40"
+        height="40"
+        class="logolibreria"
+      />
+
+      <!--img
+        src="assets/images/logos/robin-light.png"
+        alt="30"
+        height="30"
+        class="logo logo-light"
+      /-->
+    </a>
+
+    <button
+      type="button"
+      class="btn btn-sm px-3 font-size-16 d-lg-none header-item"
+      data-toggle="collapse"
+      data-target="#topnav-menu-content"
+      (click)="toggleMenu()"
+    >
+      <i class="fa fa-fw fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="topnav-menu-content">
+      <ul class="navbar-nav ms-auto" id="topnav-menu">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="javascript: void(0);"
+            [ngxScrollTo]="'home'"
+            [ngClass]="{ active: currentSection === 'home' }"
+            >Pagina de inicio</a
+          >
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center">
+        <div class="d-flex" *ngIf="!isLoggedIn; else accountMenu">
+          <button
+            class="btn btn-rounded btn-light b-width"
+            routerLink="/account/auth/login-2"
+          >
+            Login
+          </button>
+
+          <button
+            class="btn btn-rounded btn-primary b-width ms-2"
+            routerLink="/account/auth/signup"
+          >
+            Registrar
+          </button>
+        </div>
+
+        <ng-template #accountMenu>
+          <app-page-header-user-dropdown
+            [landing]="true"
+          ></app-page-header-user-dropdown>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div
+  appScrollspy
+  [spiedTags]="['SECTION']"
+  (sectionChange)="onSectionChange($event)"
+>
+  <!-- hero section start -->
+  <section class="section hero-section bg-ico-hero bg-dark-color" id="home">
+    <div class="bg-overlay"></div>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <div class="text-white-50">
+            <h1 class="text-white fw-semibold mb-3 hero-title">
+              Eccomerce-library
+            </h1>
+            <p class="font-size-14 text-white mt-4">
+              El acontecimineto literario de la decada
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- end row -->
+    </div>
+
+    <!-- end container -->
+  </section>
+  <!-- hero section end -->
+
+
+  <section class="section pt-4 bg-white" id="features">
+    <div class="container">
+      <div class="row mt-4">
+        <div class="col-lg-12">
+          <div class="text-center mb-5">
+            <h1 class="description-title fw-bold">Un lazo con tu saber</h1>
+            <h5 class="mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do <br> eiusmod tempor incididunt ut labore et dolore magna.</h5>
+            <a [routerLink]="'books'" class="btn btn-outline-primary mt-3">Ver todos los libros</a>
+          </div>
+        </div>
+      </div>
+      <app-categories-list-page></app-categories-list-page>
+    </div>
+  </section>
+
+
+
+  <section class="section pt-4 bg-white" id="features">
+    <div class="container">
+      <div class="row mt-4">
+        <div class="col-lg-12">
+          <div class="text-center mb-5">
+            <h1 class="description-title fw-bold">Noticias</h1>
+            <h5 class="mt-2">Descubre aqui los libros mas recientes.</h5>
+            <a [routerLink]="'books'" class="btn btn-outline-primary mt-3">Ver todos los libros</a>
+          </div>
+        </div>
+      </div>
+      <app-news-list-page></app-news-list-page>
+    </div>
+  </section>
+
+
+  <!-- Footer start -->
+  <footer class="landing-footer footer-bg">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-sm-6">
+          <div class="mb-4 mb-lg-0">
+            <h5 class="mb-3 footer-list-title">Company</h5>
+            <ul class="list-unstyled footer-list-menu">
+              <li>
+                <a class="cursor-pointer" [ngxScrollTo]="'features'"
+                  >Features</a
+                >
+              </li>
+              <li><a class="cursor-pointer" [ngxScrollTo]="'faqs'">FAQs</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="mb-4 mb-lg-0">
+            <h5 class="mb-3 footer-list-title">Resources</h5>
+            <ul class="list-unstyled footer-list-menu">
+              <li><a href="/#/meta/privacy-policy">Privacy Policy</a></li>
+              <li><a href="/#/meta/terms-use">Terms & Conditions</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="mb-4 mb-lg-0">
+            <h5 class="mb-3 footer-list-title">Links</h5>
+            <ul class="list-unstyled footer-list-menu">
+              <li>
+                <a class="cursor-pointer" [ngxScrollTo]="'roadmap'">Roadmap</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- end row -->
+
+      <hr class="footer-border my-5" />
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="mb-4">
+            <!-- <img src="assets/images/logo-light.png" alt="" height="20"> -->
+            <img src="assets/images/logos/robin-light.png" alt="" height="30" />
+          </div>
+
+          <p class="mb-2">{{ year }} ©.</p>
+          <p>
+            It will be as simple as occidental in fact, it will be to an english
+            person, it will seem like simplified English, as a skeptical
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- end container -->
+  </footer>
+  <!-- Footer end -->
+</div>

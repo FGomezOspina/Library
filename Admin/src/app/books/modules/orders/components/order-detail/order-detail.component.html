@@ -1,0 +1,61 @@
+ <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="invoice-title">
+            <h4 class="float-end font-size-16">Order # 12345</h4>
+            <div class="mb-4">
+              <img src="assets/images/logo-dark.png" alt="logo" height="20" />
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-6">
+              <address>
+                <strong>Despechado de:</strong><br>
+                {{orderDetail?.firstName}} {{orderDetail?.lastName}}<br>
+                1234 Main<br>
+                Apt. 4B<br>
+                Springfield, ST 54321
+              </address>
+            </div>
+            <div class="col-6 text-sm-end">
+              <address>
+                <strong>Enviado a:</strong><br>
+                Kenny Rigdon<br>
+                1234 Main<br>
+                Apt. 4B<br>
+                Springfield, ST 54321
+              </address>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mt-3">
+              <address>
+                <strong>Metodo de pago:</strong><br>
+                {{orderDetail?.payment?.provider}}<br>
+                {{orderDetail?.email}}
+              </address>
+            </div>
+            <div class="col-6 mt-3 text-sm-end">
+              <address>
+                <strong>Fecha de orden:</strong><br>
+                {{orderDetail.createdAt | date : "EEEE MMM dd yyyy"}}<br><br>
+              </address>
+            </div>
+          </div>
+
+
+          <div class="mt-5">
+            <h5><span class="text-success fw-bold me-2">Total</span> ${{orderDetail?.payment?.value}} COP</h5>
+          </div>
+
+
+          <app-order-products-list></app-order-products-list>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+

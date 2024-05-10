@@ -1,0 +1,75 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card-body border-bottom">
+      <div class="row">
+        <div class="col-12">
+          <p class="card-title-desc">
+            Fill all information for the Category
+          </p>
+        </div>
+        <form class="row" [formGroup]="group" (ngSubmit)="ngSubmit()">
+
+
+          <div class="col-md-6 mb-4" id="title">
+            <label for="title"> Title </label>
+            <input id="title" placeholder="Category Title" formControlName="title"
+              type="text" class="form-control" autocomplete="new-data" [ngClass]="ngClassValidate(group, 'title')" />
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['title'].errors">
+                Title must be valid
+              </div>
+            </div>
+          </div>
+
+
+          <div id="description">
+            <div class="col-12" >
+              <label for="description"> Description </label>
+              <textarea id="description" formControlName="description" placeholder="Description"
+                type="text" class="form-control" autocomplete="new-data" [ngClass]="ngClassValidate(group, 'description')">
+              </textarea>
+              <div *ngIf="submit && f" class="invalid-feedback">
+                <div *ngIf="f['description'].errors">Description must be valid</div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-12 mb-3" *ngIf="categoryId">
+            <label> Logo </label>
+            <ngx-dropzone
+              [multiple]="false"
+              [expandable]="false"
+              accept="image/jpeg,image/jpg,image/png,image/gif"
+              (change)="onSelect($event, categoryLogo)">
+              <ngx-dropzone-label>Logo</ngx-dropzone-label>
+              <ngx-dropzone-image-preview
+                *ngIf="categoryLogo.file"
+                [file]="categoryLogo.file"
+                ngProjectAs="ngx-dropzone-preview">
+                <ngx-dropzone-label
+                  >{{ categoryLogo.name }} ({{
+                    categoryLogo.file.type
+                  }})</ngx-dropzone-label
+                >
+              </ngx-dropzone-image-preview>
+              <div
+                class="ngx-dropzone-image-preview"
+                *ngIf="categoryLogo.url"
+                [ngStyle]="{
+                  backgroundImage: 'url(' + categoryLogo.url + ')'
+                }"></div>
+            </ngx-dropzone>
+          </div>
+
+
+          <div class="col-md-2 mb-3 float-end align-self-end ms-auto">
+            <button type="submit" class="btn w-100 btn-primary w-md mt-4">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

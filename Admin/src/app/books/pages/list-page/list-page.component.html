@@ -1,0 +1,259 @@
+<div class="container-fluid" style="max-width: 96%">
+  <div class="row">
+    <div class="row justify-content-start my-4" *ngIf="currentCategory">
+      <div class="col-6 ms-3">
+        <h1 class="fw-bold">{{ currentCategory.title }}</h1>
+        <p class="font-size-16">{{ currentCategory.description }}</p>
+      </div>
+    </div>
+
+    <div class="col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Filtro</h4>
+          <div>
+            <h5 class="font-size-14 mb-3">Categorias</h5>
+            <ul class="list-unstyled book-list">
+              <li
+                (click)="categoryFilter(item)"
+                *ngFor="let item of categories"
+              >
+                <a
+                  class="category-text"
+                  [ngClass]="{
+                    'text-primary': item.id === categoriesControl.value
+                  }"
+                  href="javascript: void(0);"
+                  ><i class="mdi mdi-chevron-right me-1"></i>
+                  {{ item.title }}</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="mt-4 pt-3">
+            <h5 class="font-size-14 mb-3">Precio</h5>
+            <ng5-slider
+              [(value)]="pricevalue"
+              [(highValue)]="maxVal"
+              [options]="priceoption"
+              (valueChange)="valueChange($event)"
+              (highValueChange)="highValueChange($event)"
+            ></ng5-slider>
+          </div>
+
+          <div class="mt-4 pt-3">
+            <h5 class="font-size-14 mb-3">Descuento</h5>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck1"
+                [checked]="discountControl.value === -10"
+                (change)="discountFilter($event, -10)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck1"
+                >Menos que 10%</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck2"
+                [checked]="discountControl.value === 10"
+                (change)="discountFilter($event, 10)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck2"
+                >10% or mas</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck3"
+                [checked]="discountControl.value === 20"
+                (change)="discountFilter($event, 20)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck3"
+                >20% or mas</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck4"
+                [checked]="discountControl.value === 30"
+                (change)="discountFilter($event, 30)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck4"
+                >30% or mas</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck5"
+                [checked]="discountControl.value === 40"
+                (change)="discountFilter($event, 40)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck5"
+                >40% o mas</label
+              >
+            </div>
+            <div class="form-check mt-2">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="bookdiscountCheck6"
+                [checked]="discountControl.value === 50"
+                (change)="discountFilter($event, 50)"
+              />
+              <label class="form-check-label" for="bookdiscountCheck6"
+                >50% o mas</label
+              >
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3">
+            <h5 class="font-size-14 mb-3">Tags</h5>
+            <ul class="list-unstyled book-list">
+              <li
+                (click)="tagFilter(item)"
+                *ngFor="let item of tags"
+              >
+                <a
+                  class="category-text"
+                  [ngClass]="{
+                    'text-primary': item?.id === (tagsControl?.value ?? null)
+                  }"
+                  href="javascript: void(0);"
+                  ><i class="mdi mdi-chevron-right me-1"></i>
+                  {{ item.title }}</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="row mb-3">
+        <div class="col-xl-4 col-sm-6">
+          <div class="mt-2">
+            <h5>Recientes</h5>
+          </div>
+        </div>
+        <div class="col-lg-8 col-sm-6">
+          <form class="mt-4 mt-sm-0 float-sm-end d-flex align-items-center">
+            <div class="search-box me-2">
+              <div class="position-relative">
+                <input
+                  type="search"
+                  class="form-control"
+                  id="searchInput"
+                  placeholder="Buscar"
+                  [formControl]="searchControl"
+                  autocomplete="new-input"
+                />
+                <i class="bx bx-search-alt search-icon"></i>
+              </div>
+            </div>
+            <ul class="nav nav-pills book-view-nav">
+              <li class="nav-item">
+                <a (click)="clear()" class="btn btn-light"
+                  ><i class="mdi mdi-refresh"></i
+                ></a>
+              </li>
+            </ul>
+          </form>
+        </div>
+      </div>
+
+      <div class="row">
+        <div
+          *ngIf="(service.collection$ | async)?.data?.length; else empty"
+          class="row"
+        >
+          <div
+            class="col-xl-4 col-sm-6"
+            *ngFor="let book of (service.collection$ | async)?.data"
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="book-img position-relative">
+                  <div class="avatar-sm book-ribbon">
+                    <span
+                      *ngIf="book.discount > 0"
+                      class="avatar-title rounded-circle bg-primary"
+                    >
+                      -{{ book.discount }} %
+                    </span>
+                  </div>
+                  <a
+                    *ngIf="book.media"
+                    [routerLink]="['./detail/', book.id]"
+                    href="javascript: void(0);"
+                    ><img
+                      src="{{ book.media[0]?.url }}"
+                      alt=""
+                      class="img-fluid rounded mx-auto d-block"
+                  /></a>
+                </div>
+                <div class="mt-4 text-center">
+                  <h5 class="mb-3 text-truncate">
+                    <a
+                      [routerLink]="['./detail/', book.id]"
+                      href="javascript: void(0);"
+                      class="text-dark"
+                      >{{ book.title }}
+                    </a>
+                  </h5>
+                  <h5 *ngIf="book.discount > 0" class="my-0">
+                    <b
+                      >$
+                      {{
+                        (
+                          book?.price -
+                          book?.price * (book?.discount / 100)
+                        ).toFixed(1)
+                      }}
+                    </b>
+                    <br />
+                    <span class="text-muted mr-2 mt-2"
+                      ><del>$ {{ book.price }}</del></span
+                    >
+                  </h5>
+                  <h5
+                    *ngIf="book?.discount === null || book?.discount == 0"
+                    class="mb-4"
+                  >
+                    <b>${{ book?.price }} USD</b>
+                  </h5>
+
+                  <p *ngIf="book.likesCount > 0" class="font-size-15 mt-3"><i class="bx bxs-heart text-danger"></i> {{book.likesCount}}</p>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #empty>
+          <div class="row justify-content-center py-2">
+            <div class="col-12">
+              <h3 class="text-center">No hay libros disponibles</h3>
+            </div>
+          </div>
+        </ng-template>
+        <!-- end row -->
+      </div>
+      <div class="row">
+        <div class="col-lg-12"></div>
+      </div>
+    </div>
+    <!-- end row -->
+  </div>
+</div>

@@ -1,0 +1,328 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card-body border-bottom">
+      <div class="row">
+        <div class="col-12">
+          <p class="card-title-desc">Fill all information for the Book</p>
+        </div>
+        <form class="row" [formGroup]="group" (ngSubmit)="ngSubmit()">
+          <div class="col-md-6 mb-4" id="title">
+            <label for="title"> Title </label>
+            <input
+              id="title"
+              placeholder="Book Title"
+              formControlName="title"
+              type="text"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'title')"
+            />
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['title'].errors">Title must be valid</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4" id="price">
+            <label for="price"> Price </label>
+            <input
+              id="price"
+              placeholder="Price"
+              formControlName="price"
+              type="number"
+              class="form-control"
+              min="1000"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'price')"
+            />
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['price'].errors">Price must be valid</div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <label for="category"> Category </label>
+            <div class="d-flex">
+              <i
+                role="button"
+                class="bx bxs-help-circle font-size-16"
+                ngbTooltip="At least 2 characters are required for your search term"
+              ></i>
+              <ng-select
+                class="ms-1 w-100"
+                [items]="listCatSearch ? allCategories : []"
+                [closeOnSelect]="true"
+                [multiple]="true"
+                placeholder="Select Category"
+                clearAllText="Clear"
+                formControlName="categories"
+                (clear)="allCategories = []; listCatSearch = false"
+                [clearSearchOnAdd]="true"
+                (search)="onListCategorySearch($event)"
+                labelForId="category"
+                [ngClass]="ngClassValidate(group, 'categories')"
+                bindLabel="title"
+                bindValue="id"
+              >
+                <ng-template
+                  *ngIf="listCatSearch"
+                  ng-option-tmp
+                  let-item="item"
+                  let-item$="item$"
+                  let-index="index"
+                >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      id="item-{{ index }}"
+                      type="checkbox"
+                      [ngModel]="item$.selected"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                    <label class="form-check-label" for="corporation">
+                      {{ item["title"] }}
+                    </label>
+                  </div>
+                </ng-template>
+                <ng-template ng-multi-label-tmp let-items="items">
+                  <div
+                    class="ng-value"
+                    *ngFor="let m of $any(items | slice : 0 : 2)"
+                  >
+                    {{ m.title }}
+                  </div>
+                  <div class="ng-value" *ngIf="items.length > 2">
+                    <span class="ng-value-label"
+                      >{{ items.length - 2 }} more...</span
+                    >
+                  </div>
+                </ng-template>
+                <ng-template ng-footer-tmp>
+                  <div class="row justify-content-center align-items-center">
+                    <div class="col-auto">
+                      <ul
+                        class="pagination pagination-rounded justify-content-end mb-2"
+                      >
+                        <ngb-pagination
+                          [collectionSize]="totalCategories"
+                          [(page)]="categoriesPage"
+                          [maxSize]="3"
+                          [rotate]="true"
+                          [pageSize]="categoriesPerPage"
+                          (pageChange)="onCatsPageChange($event)"
+                        >
+                        </ngb-pagination>
+                      </ul>
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+              <div *ngIf="submit && f" class="invalid-feedback">
+                <div *ngIf="f['categories'].errors">
+                  Categories must be valid
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <label for="tag"> Tag </label>
+            <div class="d-flex">
+              <i
+                role="button"
+                class="bx bxs-help-circle font-size-16"
+                ngbTooltip="At least 2 characters are required for your search term"
+              ></i>
+              <ng-select
+                class="ms-1 w-100"
+                [items]="listTagSearch ? allTags : []"
+                [closeOnSelect]="true"
+                [multiple]="true"
+                placeholder="Select Tag"
+                [ngClass]="ngClassValidate(group, 'tags')"
+                clearAllText="Clear"
+                formControlName="tags"
+                (clear)="allTags = []; listTagSearch = false"
+                [clearSearchOnAdd]="true"
+                (search)="onListTagSearch($event)"
+                labelForId="tag"
+                bindLabel="title"
+                bindValue="id"
+              >
+                <ng-template
+                  *ngIf="listTagSearch"
+                  ng-option-tmp
+                  let-item="item"
+                  let-item$="item$"
+                  let-index="index"
+                >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      id="item-{{ index }}"
+                      type="checkbox"
+                      [ngModel]="item$.selected"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                    <label class="form-check-label" for="corporation">
+                      {{ item["title"] }}
+                    </label>
+                  </div>
+                </ng-template>
+                <ng-template ng-multi-label-tmp let-items="items">
+                  <div
+                    class="ng-value"
+                    *ngFor="let m of $any(items | slice : 0 : 2)"
+                  >
+                    {{ m.title }}
+                  </div>
+                  <div class="ng-value" *ngIf="items.length > 2">
+                    <span class="ng-value-label"
+                      >{{ items.length - 2 }} more...</span
+                    >
+                  </div>
+                </ng-template>
+                <ng-template ng-footer-tmp>
+                  <div class="row justify-content-center align-items-center">
+                    <div class="col-auto">
+                      <ul
+                        class="pagination pagination-rounded justify-content-end mb-2"
+                      >
+                        <ngb-pagination
+                          [collectionSize]="totalTags"
+                          [(page)]="tagsPage"
+                          [maxSize]="3"
+                          [rotate]="true"
+                          [pageSize]="tagsPerPage"
+                          (pageChange)="onTagsPageChange($event)"
+                        >
+                        </ngb-pagination>
+                      </ul>
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+              <div *ngIf="submit && f" class="invalid-feedback">
+                <div *ngIf="f['tags'].errors">Tags must be valid</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4" id="discount">
+            <label for="discount"> Discount </label>
+            <input
+              id="discount"
+              placeholder="Discount"
+              formControlName="discount"
+              type="number"
+              min="1"
+              max="99"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'discount')"
+            />
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['discount'].errors">Discount must be valid</div>
+            </div>
+          </div>
+
+
+          <div class="col-md-6 mb-4" id="availableQuantity">
+            <label for="availableQuantity"> Available Quantity </label>
+            <input
+              min="0"
+              id="availableQuantity"
+              placeholder="Available Quantity"
+              formControlName="availableQuantity"
+              type="number"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'availableQuantity')"
+            />
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['availableQuantity'].errors">Available Quantity must be valid</div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-4" id="description">
+            <label for="description"> Description </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Description"
+              type="text"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'description')"
+            >
+            </textarea>
+            <div *ngIf="submit && f" class="invalid-feedback">
+              <div *ngIf="f['description'].errors">
+                Description must be valid
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mb-4">
+            <label> Media </label>
+            <ngx-dropzone
+              [multiple]="true"
+              [expandable]="false"
+              accept="image/jpeg,image/jpg,image/png,image/gif"
+              (change)="onSelect($event)"
+            >
+              <ngx-dropzone-label>
+                <p>
+                  <span class="fw-bold">
+                    <i
+                      style="font-size: 1.4em"
+                      class="dripicons-cloud-upload text-primary me-2"
+                    ></i>
+                    Drop file here or click to upload</span
+                  >
+                  <br /><br />
+                  The file upload limit is up to 20MB per file. Please note that
+                  only the next formats are supported.
+                </p>
+              </ngx-dropzone-label>
+            </ngx-dropzone>
+            <div class="row mt-3" *ngIf="media?.length > 0">
+              <p class="fw-medium">Media Added</p>
+              <div
+                class="col-2"
+                *ngFor="let i of media; let index = index"
+              >
+                <div class="d-flex justify-content-center align-items-center">
+                  <a class="active">
+                    <div class="book-color-item border rounded">
+                      <div
+                        class="avatar-lg justify-content-center d-flex align-items-center"
+                      >
+                        <img (click)="lightboxImage(i.url)" [src]="i.url" class="avatar-md cursor-pointer">
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="d-flex justify-content-center mt-1">
+                  <button
+                    (click)="dettachMedia(i, index)"
+                    class="btn btn-sm btn-soft-danger"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </form>
+
+        <div class="col-md-2 mt-5 float-end align-self-end ms-auto">
+          <button (click)="ngSubmit()" class="btn w-100 btn-primary w-md">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="card">
+  <div class="card-body border-bottom">
+    <div class="row">
+      <div class="col-10">
+        <h4 class="card-title mb-0">
+          {{TRANSLATE_KEY+ 'MOVE_U' | translate}} {{ member.firstName }} {{ member.lastName }}
+        </h4>
+      </div>
+      <div class="col-2 text-end">
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="activeModal.dismiss('Cross click')"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <form (ngSubmit)="ngSubmit()" [formGroup]="group">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="companyId"> {{TRANSLATE_KEY+ 'COMPANY' | translate}} </label>
+          <ng-select
+            [items]="companies"
+            (search)="companySearch($event)"
+            bindLabel="name"
+            bindValue="id"
+            class="form-control"
+            id="companyId"
+            formControlName="companyId"
+            [ngClass]="ngClassValidate(group, 'companyId')">
+          </ng-select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="roleId"> {{TRANSLATE_KEY+ 'ROLE' | translate}}</label>
+          <ng-select
+            [items]="roleService.model ? roleService.model : []"
+            bindLabel="name"
+            bindValue="id"
+            class="form-control"
+            id="roleId"
+            formControlName="roleId"
+            [ngClass]="ngClassValidate(group, 'roleId')">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="row justify-content-end">
+        <div class="col-md-2 mt-md-4 mb-3">
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">{{TRANSLATE_KEY+ 'MOVE' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

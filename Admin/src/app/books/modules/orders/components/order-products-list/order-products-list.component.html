@@ -1,0 +1,207 @@
+<div class="container-fluid" style="max-width: 96%">
+  <div class="row">
+    <div class="col-12">
+      <div class="row mb-3">
+        <div class="col-12">
+          <form class="mt-4 mt-sm-0 float-sm-end d-flex align-items-center">
+            <div class="search-box me-2">
+              <div class="position-relative">
+                <input
+                  type="search"
+                  class="form-control"
+                  id="searchInput"
+                  [placeholder]="TRANSLATE_KEY + 'SEARCH' | translate"
+                  [formControl]="searchControl"
+                  autocomplete="new-input"
+                />
+                <i class="bx bx-search-alt search-icon"></i>
+              </div>
+            </div>
+            <ul class="nav nav-pills product-view-nav">
+              <li class="nav-item">
+                <a (click)="clear()" class="btn btn-light"
+                  ><i class="mdi mdi-refresh"></i
+                ></a>
+              </li>
+            </ul>
+          </form>
+        </div>
+      </div>
+      <div
+          *ngIf="
+            (service.collection$ | async)?.data?.length &&
+            authenticationService?.authService?.model
+          "
+          class="row"
+        >
+          <div
+            class="col-12"
+            *ngFor="
+              let data of (service.collection$ | async)?.data;
+              let index = index
+            "
+          >
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <img
+                      *ngIf="data?.product?.media?.length > 0"
+                      [src]="data?.product?.media[0]?.url"
+                      (click)="lightboxImage(data?.product?.media[0]?.url)"
+                      class="img-fluid rounded cursor-pointer"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-8 d-flex align-items-center">
+                    <div class="col-12 ms-2 text-dark">
+                      <h4
+                        [routerLink]="'/products/detail/' + data.product.id"
+                        class="fw-bold cursor-pointer"
+                      >
+                        {{ data.product.title }}
+                      </h4>
+                      <p>
+                        Quantity:
+                        <span class="text-primary fw-bold">{{
+                          data.quantity
+                        }}</span>
+                      </p>
+                      <p *ngIf="data.size">Size: {{ data.size.value }}</p>
+                      <p *ngIf="data.color">Color: {{ data.color.value }}</p>
+                      <div
+                        class="col-12 d-flex flex-wrap justify-content-between align-items-end"
+                      >
+                        <div
+                          *ngIf="
+                            (!data.product?.wholesaleMinQuantity &&
+                              !data.product?.wholesalePrice) ||
+                            data.quantity < data.product?.wholesaleMinQuantity
+                          "
+                        >
+                          <h4 *ngIf="data.product?.discount > 0">
+                            Price :
+                            <span class="text-muted me-4"
+                              ><del>${{ data.product?.price }} COP</del>
+                            </span>
+                            <b
+                              >${{
+                                (
+                                  data.product?.price -
+                                  data.product?.price *
+                                    (data.product?.discount / 100)
+                                ).toFixed(1)
+                              }}
+                              COP</b
+                            >
+                          </h4>
+                          <h4
+                            *ngIf="
+                              data.product?.discount === null ||
+                              data.product?.discount == 0
+                            "
+                          >
+                            Price :
+                            <b>${{ data.product?.price }} COP</b>
+                          </h4>
+                        </div>
+
+                        <div
+                          *ngIf="
+                            data.quantity >=
+                              data.product?.wholesaleMinQuantity &&
+                            data.product?.wholesalePrice &&
+                            roleNames.includes('WHOLESALE_USER') &&
+                            authenticationService?.authService?.model
+                              ?.wholesaleUsers?.isApproved
+                          "
+                        >
+                          <h4 *ngIf="data.product?.wholesaleDiscount > 0">
+                            Price :
+                            <span class="text-muted me-4"
+                              ><del
+                                >${{ data.product?.wholesalePrice }} COP</del
+                              >
+                            </span>
+                            <b
+                              >${{
+                                (
+                                  data.product?.wholesalePrice -
+                                  data.product?.wholesalePrice *
+                                    (data.product?.wholesaleDiscount / 100)
+                                ).toFixed(1)
+                              }}
+                              COP</b
+                            >
+                          </h4>
+                          <h4
+                            *ngIf="
+                              data.product?.wholesaleDiscount === null ||
+                              data.product?.wholesaleDiscount == 0
+                            "
+                          >
+                            Wholesale Price :
+                            <b>${{ data.product?.wholesalePrice }} COP</b>
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-between align-items-center">
+            <div class="col-auto me-auto">
+              <div class="dataTables_length" id="tickets-table_length">
+                <label class="d-inline-flex align-items-center"
+                  >Show
+                  <select
+                    aria-controls="tickets-table"
+                    name="pageSize"
+                    [formControl]="limitControl"
+                    class="custom-select custom-select-sm form-control form-control-sm mx-2"
+                  >
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                  </select>
+                  {{ TRANSLATE_KEY + "ENTRIES" | translate }}</label
+                >
+              </div>
+            </div>
+            <div class="col-auto me-auto">
+              <p class="mb-0">
+                {{ TRANSLATE_KEY + "SHOWING" | translate }}
+                <b>{{ service.from }}</b>
+                {{ TRANSLATE_KEY + "TO" | translate }} <b>{{ service.to }}</b>
+                {{ TRANSLATE_KEY + "OF" | translate }}
+                <b>{{ service.total }}</b>
+                {{ TRANSLATE_KEY + "ENTRIES" | translate }}
+              </p>
+            </div>
+
+            <div class="col-auto">
+              <ul
+                class="pagination pagination-rounded justify-content-end mb-2"
+              >
+                <ngb-pagination
+                  [collectionSize]="service.total"
+                  [(page)]="service.page"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  [pageSize]="service.limit"
+                >
+                </ngb-pagination>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
+    </div>
+    <!-- end row -->
+  </div>
+</div>

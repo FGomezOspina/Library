@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  <app-page-title
+    title="Profile"
+    [breadcrumbItems]="menuAccountItems"></app-page-title>
+
+  <div class="card shadow-sm mb-0">
+    <form (ngSubmit)="ngSubmit()" [formGroup]="group">
+      <div class="card-body p-5">
+        <div class="row justify-content-end">
+          <div class="col-12">
+            <h4 class="card-title">Actualizar cuenta</h4>
+            <p class="card-title-desc">Rellena lo que deseas actualizar</p>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="firstName"> Primer Nombre </label>
+            <input
+              id="firstName"
+              formControlName="firstName"
+              type="text"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'firstName')" />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="lastName"> Segundo nombre </label>
+            <input
+              id="lastName"
+              formControlName="lastName"
+              type="text"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'lastName')" />
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="preferredName"> Nombre de usuario </label>
+            <input
+              id="preferredName"
+              formControlName="preferredName"
+              type="text"
+              class="form-control"
+              autocomplete="new-data"
+              [ngClass]="ngClassValidate(group, 'preferredName')" />
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label for="about">Sobre mi </label>
+            <textarea
+              id="about"
+              formControlName="about"
+              rows="6"
+              class="form-control"
+              [ngClass]="ngClassValidate(group, 'about')"></textarea>
+          </div>
+
+          <div class="col-md-2">
+            <button type="submit" class="btn w-100 btn-primary">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
