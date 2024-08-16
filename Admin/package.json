@@ -46,7 +46,7 @@
     "chart.js": "^2.9.4",
     "chartist": "^0.11.4",
     "echarts": "^5.4.1",
-    "firebase": "^9.15.0",
+    "firebase": "^10.13.0",
     "flatpickr": "^4.6.13",
     "jquery": "^3.6.3",
     "leaflet": "^1.9.3",
@@ -82,13 +82,13 @@
     "save": "^2.9.0",
     "simplebar-angular": "^2.5.0",
     "simplebar-core": "^1.2.4",
-    "sweetalert2": "^11.6.16",
+    "sweetalert2": "^11.6.13",
     "tslib": "^2.4.1",
     "xlsx": "^0.18.5",
     "zone.js": "^0.12.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^15.0.4",
+    "@angular-devkit/build-angular": "^18.2.0",
     "@angular/cli": "^15.0.4",
     "@angular/compiler-cli": "^15.0.4",
     "@angular/language-service": "^15.0.4",
@@ -108,7 +108,7 @@
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
-    "protractor": "~7.0.0",
+    "protractor": "^7.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
