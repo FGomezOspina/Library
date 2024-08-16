@@ -2,14 +2,14 @@ import { Observable, map } from 'rxjs';
 
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { AuthenticationService } from '@services/account/authentication.service';
-import { CanActivate } from '@angular/router';
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterStateSnapshot } from '@angular/router';
 import { User } from '@models/account/user.model';
 
 @Injectable({ providedIn: 'root' })
-export class EmailConfirmedGuard implements CanActivate {
+export class EmailConfirmedGuard  {
   constructor(private router: Router, private service: AuthenticationService) { }
 
   canActivate(

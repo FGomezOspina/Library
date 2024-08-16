@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { ModelService } from '@services/common/model.service';
 import { Observable } from 'rxjs';
 import { Member } from '@models/account/member.model';
-import { Resolve } from '@angular/router';
+
 import { Router } from '@angular/router';
 import { RouterStateSnapshot } from '@angular/router';
 import { User } from '@models/account/user.model';
@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 import { tap } from 'rxjs';
 
 @Injectable()
-export class ProfileApiResolver implements Resolve<Member | null> {
+export class ProfileApiResolver  {
   constructor(
     private api: CommonVerbsApiService,
     @Inject('MemberService')

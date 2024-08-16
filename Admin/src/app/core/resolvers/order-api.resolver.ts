@@ -4,7 +4,7 @@ import { Inject } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { ModelService } from '@services/common/model.service';
 import { Observable } from 'rxjs';
-import { Resolve } from '@angular/router';
+
 import { Router } from '@angular/router';
 import { RouterStateSnapshot } from '@angular/router';
 import { catchError } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { tap } from 'rxjs';
 import { Order } from '@models/orders/order.model';
 
 @Injectable()
-export class OrderApiResolver implements Resolve<Order | null> {
+export class OrderApiResolver  {
   constructor(
     @Inject('OrderService')
     public ordersService: ModelService<Order>,
